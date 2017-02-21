@@ -33,8 +33,8 @@ for row in sevent.rows:
       data["description"] = events[data["name"]]["description"]
       if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
         ts = row[5].value.split("～")
-        data["stime"] = datetime.strptime(ts[0], "%H:%M")
-        data["etime"] = datetime.strptime(ts[1], "%H:%M")
+        data["stime"] = ts[0]
+        data["etime"] = ts[1]
       caldata.append(data)
   except KeyError as e:
     errdata.append({
