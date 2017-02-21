@@ -1,0 +1,220 @@
+/*
+  ヘッダ
+*/
+header{
+  color: black;
+  > section, > aside{
+    .mainwindow();
+    min-height: 120px;
+  }
+  > section#title{
+    width: calc(~"70% - 96px");
+    float: left;
+    > h1{
+      font-size: 200%;
+      margin: 0;
+      > .title{
+        font-size: 150%;
+        color: white;
+        text-shadow: 0px 1px 0 black,
+          -6px -6px 0 black,
+           1px -1px 0 black,
+           1px  1px 0 black,
+          -1px  0px 0 black;
+      }
+    }
+    > h2{
+      font-size: 100%;
+      font-weight: normal;
+    }
+  }
+  > aside{
+    width: 30%;
+    float: left;
+    padding: 24px;
+    margin-left:12px;
+    font-size: 120%;
+    min-height: 100px;
+    > span{
+      font-weight: bold;
+      font-size: 130%;
+    }
+    > .year{
+      color: darkred;
+    }
+    > .month{
+      color: darksalmon;
+    }
+  }
+}
+
+/*
+  メイン部分
+*/
+
+section#main{
+  width: 100%;
+  clear: both;
+  padding: 24px 12px;
+  > ul.outer
+  {
+    display: table;
+    width: ~"calc(100% - 24px)";
+    padding: 0;
+    border: 2px solid black;
+    > li.row
+    {
+      display: table-row;
+      padding: 4px;
+      .weekdays();
+      > .cell{
+        display: table-cell;
+        border: 1px solid black;
+        margin: 0px;
+        padding: 0px;
+        &.day, &.week{
+          width: 2.5ex;
+          font-weight: bold;
+          text-align: center;
+          vertical-align: middle;
+        }
+        &.eventlist{
+          list-style-type: none;
+          > li{
+            display: table;
+            color: black;
+            border: 0 solid black;
+            border-bottom-width: 1px;
+            width: 100%;
+            > span {
+              display: table-cell;
+              &.info
+              {
+                > span {
+                  display: block;
+                  &.name{
+                    font-weight: bold;
+                  }
+                  &.detail{
+                    text-indent: 0.5ex;
+                    margin: 0 0.5ex;
+                  }
+                }
+              }
+              &.time 
+              {
+                width: ~"calc(12ex + 12px)";
+                vertical-align: middle;
+                border: 0 solid black;
+                border-left-width: 1px;
+                padding: 0 12px;
+              }
+            }
+            &:last-child{
+              border-bottom-width: 0;
+            }
+            .projectfont();
+          }
+        }
+      }
+    }
+  }
+}
+
+/*
+  フッター
+*/
+footer
+{
+  .mainwindow();
+  address
+  {
+    padding: 4px;
+    font-style: normal;
+    > span{
+      display: block;
+      clear: both;
+      &.phone, &.fax {
+        float: left;
+        clear: none;
+        min-width: 16ex;
+        margin-right: 12px;
+      }
+    }
+  }
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+/*
+  マクロ
+*/
+
+.mainwindow()
+{
+  border: 3px solid black;
+  padding: 12px;
+  border-radius: 12px;
+}
+.weekdays()
+{
+  &.sunday
+  {
+    color: red;
+  }
+  &.monday
+  {
+  }
+  &.tuesday
+  {
+  }
+  &.wednesday
+  {
+  }
+  &.thursday
+  {
+    background-color: aliceblue;
+    > ul > li{
+      font-size: 100% !important;
+    }
+  }
+  &.friday
+  {
+  }
+  &.saturday
+  {
+    color: blue;
+  }
+}
+
+.projectfont()
+{
+  &.closed
+  {
+    background-color: white;
+  }
+  &.cproject
+  {
+    background-color: lightcyan;
+  }
+  &.workshop
+  {
+    background-color: salmon;
+  }
+  &.it
+  {
+    background-color: lightskyblue;
+  }
+}
