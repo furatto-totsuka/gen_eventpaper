@@ -58,7 +58,7 @@ def get_monthevent(filename, events):
           daylist = []
         data["name"] = row[4].value
         data["type"] = "nosection"
-        data["description"] = events[data["name"]]["description"]
+        data["description"] = str(events[data["name"]]["description"]).replace("_x000D_", "<br>")
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
           data["stime"] = ts[0]
