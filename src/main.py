@@ -72,12 +72,27 @@ def get_monthevent(filename, events):
         "name": row[4].value
       })
 
-  # エラー確認
   if len(errdata) != 0:
+    # エラー確認
     print(u"イベント詳細に登録されていないイベントがあります。広報メンバーに確認してください")
     for err in errdata:
       print(err["date"].strftime(u"%m/%d") + ":" + err["name"])
     raise "処理に失敗しました"
+  else:
+    # 木曜日を挿入する処理
+    import calendar
+    d = caldata[0]["date"]
+    lastday = calendar.monthrange(d.year, d.month)[1]
+    for day in range(1, lastday):
+      dd = datetime(d.year, d.month, day)
+      if dd.weekday() == 3:
+        caldata.append({
+          "date": dd,
+          "day" : dd.day,
+          "weekjpn": WEEK_JPNDAYS[dd.weekday()],
+          "weekeng": WEEK_ENGDAYS[dd.weekday()],
+          "text": "定休日"})
+    caldata = sorted(caldata, key=lambda c: c["day"])
 
   return caldata 
 

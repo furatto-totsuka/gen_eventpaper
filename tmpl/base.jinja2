@@ -24,15 +24,19 @@
         <span class="cell day">{{ event.day }}</span>
         <span class="cell week">{{ event.weekjpn }}</span>
         <ul class="cell eventlist">
-          {% for e in event.list %}
-            <li class="{{ e.type }}">
-              <span class="info">
-                <span class="name">{{ e.name }}</span>
-                <span class="detail">{{ e.description }}</span>
-              </span>
-              <span class="time">{{ e.stime }}～{{ e.etime }}</span>
-            </li>
-          {% endfor %}
+          {% if event.list is defined %}
+            {% for e in event.list %}
+              <li class="{{ e.type }}">
+                <span class="info">
+                  <span class="name">{{ e.name }}</span>
+                  <span class="detail">{{ e.description }}</span>
+                </span>
+                <span class="time">{{ e.stime }}～{{ e.etime }}</span>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li>{{ event.text }}</li>
+          {% endif %}
         </ul>
       </li>
     {% endfor %}
