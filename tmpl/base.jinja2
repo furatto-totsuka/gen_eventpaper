@@ -19,18 +19,20 @@
   <section id="main">
     <ul class="outer">
     {% for event in events %}
-      <!-- {{ event.name }} -->
+      <!-- {{ event.day }} -->
       <li class="row {{ event.weekeng }}">
         <span class="cell day">{{ event.day }}</span>
         <span class="cell week">{{ event.weekjpn }}</span>
         <ul class="cell eventlist">
-          <li class="{{ event.type }}">
-            <span class="info">
-              <span class="name">{{ event.name }}</span>
-              <span class="detail">{{ event.description }}</span>
-            </span>
-            <span class="time">{{ event.stime }}～{{ event.etime }}</span>
-          </li>
+          {% for e in event.list %}
+            <li class="{{ e.type }}">
+              <span class="info">
+                <span class="name">{{ e.name }}</span>
+                <span class="detail">{{ e.description }}</span>
+              </span>
+              <span class="time">{{ e.stime }}～{{ e.etime }}</span>
+            </li>
+          {% endfor %}
         </ul>
       </li>
     {% endfor %}

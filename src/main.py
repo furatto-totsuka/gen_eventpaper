@@ -13,9 +13,10 @@ def main():
   caldata = get_monthevent(u"02月ふらっとイベント表.xlsx", events)
 
   # テンプレート展開
+  baseday = caldata[0]["date"]
   vars = {
-    "year": 2017,
-    "month" : 4,
+    "year": baseday.year,
+    "month" : baseday.month,
     "events": caldata
   }
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
@@ -38,24 +39,34 @@ def get_monthevent(filename, events):
   bevent = load_workbook(filename)
   sevent = bevent.active
   caldata = []
+  daylist = []
   errdata = []
+  date = None
   for row in sevent.rows:
     try:
       if row[0].row != 1:
         data = {}
-        date = row[1].value
+        if date == None or date != row[1].value:
+          if len(daylist) != 0: # 前日の予定をイベントリストに追加
+            caldata.append({
+              "date": date,
+              "day" : date.day,
+              "weekjpn": WEEK_JPNDAYS[date.weekday()],
+              "weekeng": WEEK_ENGDAYS[date.weekday()],
+              "list": daylist})
+          date = row[1].value
+          daylist = []
         data["name"] = row[4].value
         data["type"] = "nosection"
-        data["day"] = date.day
-        data["weekjpn"] = WEEK_JPNDAYS[date.weekday()]
-        data["weekeng"] = WEEK_ENGDAYS[date.weekday()]
         data["description"] = events[data["name"]]["description"]
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
           data["stime"] = ts[0]
           data["etime"] = ts[1]
-        caldata.append(data)
+        daylist.append(data)
+
     except KeyError as e:
+      # 取得エラーはあとで報告
       errdata.append({
         "date": row[1].value,
         "name": row[4].value
