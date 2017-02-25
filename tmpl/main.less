@@ -8,8 +8,7 @@ header{
     min-height: 120px;
   }
   > section#title{
-    width: calc(~"70% - 96px");
-    float: left;
+    /* タイトル TODO: あとで画像に変更*/
     > h1{
       font-size: 200%;
       margin: 0;
@@ -22,28 +21,24 @@ header{
            1px  1px 0 black,
           -1px  0px 0 black;
       }
+      /* 年月 */
+      > h3{
+        > span{
+          font-weight: bold;
+          font-size: 130%;
+        }
+        > .year{
+          color: darkred;
+        }
+        > .month{
+          color: darksalmon;
+        }      
+      }
     }
+    /* サブタイ */
     > h2{
       font-size: 100%;
       font-weight: normal;
-    }
-  }
-  > aside{
-    width: 30%;
-    float: left;
-    padding: 24px;
-    margin-left:12px;
-    font-size: 120%;
-    min-height: 100px;
-    > span{
-      font-weight: bold;
-      font-size: 130%;
-    }
-    > .year{
-      color: darkred;
-    }
-    > .month{
-      color: darksalmon;
     }
   }
 }
