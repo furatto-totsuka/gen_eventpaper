@@ -33,24 +33,26 @@ header{
            1px  1px 0 black,
           -1px  0px 0 black;
       }
-      /* 年月 */
-      > h3{
-        > span{
-          font-weight: bold;
-          font-size: 130%;
-        }
-        > .year{
-          color: darkred;
-        }
-        > .month{
-          color: darksalmon;
-        }      
-      }
     }
     /* サブタイ */
     > h2{
       font-size: 100%;
       font-weight: normal;
+    }
+    /* 年月 */
+    h3{
+      margin: 0;
+      font-size: 120%;
+      > span{
+        font-weight: bold;
+        font-size: 130%;
+      }
+      > .year{
+        color: darkred;
+      }
+      > .month{
+        color: darksalmon;
+      }      
     }
   }
 }
@@ -67,6 +69,7 @@ section#main{
     border: 0;
     width: ~"calc(100% - 24px)";
     padding: 0;
+    column-count: 2;
     > li.row
     {
       display: table;
@@ -78,7 +81,8 @@ section#main{
       margin: 4px;
       .weekdays();
       &:nth-child(2n) {
-        background-color: floralwhite;
+        background-color: #eee;
+        -webkit-print-color-adjust: exact;
       }
       > .cell{
         display: table-cell;
@@ -95,7 +99,7 @@ section#main{
         &.eventlist{
           list-style-type: none;
           border: 2px solid black;
-          padding: 0 8px;
+          padding: 0 4px;
           > li{
             display: table;
             color: black;
@@ -107,11 +111,13 @@ section#main{
               &.info
               {
                 > span {
-                  display: block;
+                  display: inline;
                   &.name{
                     font-weight: bold;
+                    font-size: 10.5pt;
                   }
                   &.detail{
+                    font-size: 8pt;
                     text-indent: 0.5ex;
                     margin: 0 0.5ex;
                   }
@@ -123,7 +129,8 @@ section#main{
                 vertical-align: middle;
                 border: 0 solid black;
                 border-left-width: 1px;
-                padding: 0 12px;
+                text-align: center;
+                padding: 0 4px;
               }
             }
             &:last-child{
@@ -147,6 +154,7 @@ footer
   {
     padding: 4px;
     font-style: normal;
+    page-break-inside: avoid;
     > span{
       display: block;
       clear: both;
@@ -156,8 +164,14 @@ footer
         min-width: 16ex;
         margin-right: 12px;
       }
+      &.address, &.url, &.opentime{
+        display: none;
+      }
     }
   }
+}
+
+#print_main{
 }
 
 .clearfix:before,
