@@ -1,5 +1,6 @@
 # python
 # -*- coding: utf-8 -*-
+import argparse
 from openpyxl import load_workbook
 from jinja2 import Environment, FileSystemLoader
 from pprint import pprint
@@ -7,10 +8,23 @@ from datetime import datetime
 WEEK_JPNDAYS = ["月", "火", "水", "木", "金", "土", "日"]
 WEEK_ENGDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 
-def main():
+parser = argparse.ArgumentParser(description='ふらっとステーション・とつか ふらっとイベントだより生成ツール')
+parser.add_argument('filename', 
+                    type=str,
+                    nargs=None,  
+                    help=u'イベント表ファイルのパスを指定します')
+parser.add_argument('-e', '--eventlist', 
+                    type=str,
+                    required=True,
+                    help=u'イベント詳細定義ファイルのパスを指定します')
+parser.add_argument('-f', '--continue_is_fault', 
+                    default=False, 
+                    action='store_true',
+                    help=u'イベント詳細が見つからない項目があった場合でも、そのままリストを生成します(省略時False)')
+def main(args):  
   # イベントリスト作成
-  events = get_eventlist(u"イベント詳細一覧表.xlsx")
-  caldata = get_monthevent(u"02月ふらっとイベント表.xlsx", events)
+  events = get_eventlist(args.eventlist)
+  caldata = get_monthevent(args.filename, events, args.continue_is_fault)
 
   # テンプレート展開
   baseday = caldata[0]["date"]
@@ -35,7 +49,7 @@ def get_eventlist(filename):
   return events
 
 ### イベント表をチェックする
-def get_monthevent(filename, events):
+def get_monthevent(filename, events, continue_is_fault):
   bevent = load_workbook(filename)
   sevent = bevent.active
   caldata = []
@@ -74,27 +88,33 @@ def get_monthevent(filename, events):
 
   if len(errdata) != 0:
     # エラー確認
-    print(u"イベント詳細に登録されていないイベントがあります。広報メンバーに確認してください")
+    import sys
+    print(u"イベント詳細に登録されていないイベントがあります。広報メンバーに確認してください", file=sys.stderr)
     for err in errdata:
-      print(err["date"].strftime(u"%m/%d") + ":" + err["name"])
-    raise "処理に失敗しました"
-  else:
-    # 木曜日を挿入する処理
-    import calendar
-    d = caldata[0]["date"]
-    lastday = calendar.monthrange(d.year, d.month)[1]
-    for day in range(1, lastday):
-      dd = datetime(d.year, d.month, day)
-      if dd.weekday() == 3:
-        caldata.append({
-          "date": dd,
-          "day" : dd.day,
-          "weekjpn": WEEK_JPNDAYS[dd.weekday()],
-          "weekeng": WEEK_ENGDAYS[dd.weekday()],
-          "text": "定休日"})
-    caldata = sorted(caldata, key=lambda c: c["day"])
+      print(err["date"].strftime(u"%m/%d") + ":" + err["name"], file=sys.stderr)
+    if not continue_is_fault:
+      raise "処理に失敗しました"
+
+  # 木曜日を挿入する処理
+  import calendar
+  d = caldata[0]["date"]
+  lastday = calendar.monthrange(d.year, d.month)[1]
+  for day in range(1, lastday):
+    dd = datetime(d.year, d.month, day)
+    if dd.weekday() == 3:
+      caldata.append({
+        "date": dd,
+        "day" : dd.day,
+        "weekjpn": WEEK_JPNDAYS[dd.weekday()],
+        "weekeng": WEEK_ENGDAYS[dd.weekday()],
+        "text": "定休日"})
+  caldata = sorted(caldata, key=lambda c: c["day"])
 
   return caldata 
 
-if __name__ == '__main__':
-  main()
+try:
+  args = parser.parse_args()
+  main(args)
+except FileNotFoundError as fnfe:
+  print(u"引数に指定したファイルが存在しません。")
+
