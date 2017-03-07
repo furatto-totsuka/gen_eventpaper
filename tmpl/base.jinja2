@@ -34,7 +34,7 @@
               {% for e in event.list %}
                 <li class="{{ e.type }}">
                   <span class="info">
-                    <span class="name">{{ e.name }}</span>
+                    <span class="name">{{ e.mark }}{{ e.name }}</span>
                     {% if e.description != "None" %}
                       <span class="detail">{{ e.description }}</span>
                     {% endif %}

@@ -70,6 +70,7 @@ def get_monthevent(filename, events, continue_is_fault):
               "list": daylist})
           date = row[1].value
           daylist = []
+        data["mark"] = row[3].value
         data["name"] = row[4].value
         data["type"] = "nosection"
         data["description"] = str(events[data["name"]]["description"]).replace("_x000D_", "<br>")
