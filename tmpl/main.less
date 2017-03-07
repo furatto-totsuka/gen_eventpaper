@@ -15,11 +15,14 @@
 */
 header{
   color: black;
-  > section, > aside{
-    .mainwindow();
+  .clearfix();
+  .mainwindow();
+  > section{
     min-height: 120px;
   }
   > section#title{
+    float: left;
+    min-width: 1em;
     /* タイトル TODO: あとで画像に変更*/
     > h1{
       font-size: 200%;
@@ -53,6 +56,16 @@ header{
       > .month{
         color: darksalmon;
       }      
+    }
+  }
+  > aside {
+    float: right;
+    border: double 4px black;
+    padding: 8px;
+    margin: 12px;
+    > ul {
+      list-style-type: none;
+      padding: 0;
     }
   }
 }
@@ -174,18 +187,21 @@ footer
 #print_main{
 }
 
-.clearfix:before,
-.clearfix:after {
-    content: " ";
-    display: table;
+.clearfix(){
+  *zoom: 1;
+  &:before,
+  &:after {
+      content: " ";
+      display: table;
+  }
+
+  &:after {
+      clear: both;
+  }
 }
 
-.clearfix:after {
-    clear: both;
-}
-
-.clearfix {
-    *zoom: 1;
+.clearfix{
+  .clearfix();
 }
 
 /*
