@@ -45,7 +45,9 @@ def get_eventlist(filename):
   events = {}
   for row in slist.rows:
     if row[0].row != 1:
-      events[row[0].value] = {"location": row[1].value, "description": row[2].value}
+      events[row[0].value] = {"location": row[2].value, 
+          "type": row[1].value,
+          "description": row[3].value}
   return events
 
 ### イベント表をチェックする
@@ -72,7 +74,8 @@ def get_monthevent(filename, events, continue_is_fault):
           daylist = []
         data["mark"] = row[3].value
         data["name"] = row[4].value
-        data["type"] = "nosection"
+        t = events[data["name"]]["type"]
+        data["type"] = t.lower() if t != None else "closed"
         data["description"] = str(events[data["name"]]["description"]).replace("_x000D_", "<br>")
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
