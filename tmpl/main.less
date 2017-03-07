@@ -62,7 +62,7 @@ header{
     float: right;
     border: double 4px black;
     padding: 8px;
-    margin: 12px;
+    width: 10em;
     > ul {
       list-style-type: none;
       padding: 0;
@@ -87,7 +87,7 @@ section#main{
     {
       display: table;
       padding: 4px;
-      page-break-inside: avoid;
+      break-inside: avoid;
       width: 100%;
       border: 0 dashed black;
       border-width: 2px 0;
@@ -112,13 +112,14 @@ section#main{
         &.eventlist{
           list-style-type: none;
           border: 2px solid black;
-          padding: 0 4px;
+          padding: 0;
           > li{
             display: table;
             color: black;
             border: 0 solid black;
             border-bottom-width: 1px;
             width: 100%;
+            text-indent: 4px;
             > span {
               display: table-cell;
               &.info
@@ -167,7 +168,7 @@ footer
   {
     padding: 4px;
     font-style: normal;
-    page-break-inside: avoid;
+    break-inside: avoid;
     > span{
       display: block;
       clear: both;
