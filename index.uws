@@ -1,0 +1,31 @@
+CONST RootPath = "%OneDrive%\広報チーム\イベントカレンダー"
+DIM shell = CREATEOLEOBJ("WScript.Shell")
+DIM rootdir = shell.expandEnvironmentStrings(RootPath)
+DIM fso = CREATEOLEOBJ("Scripting.FileSystemObject")
+// 処理対象ファイルの設定
+DIM sourcefile = GetEventFile(rootdir)
+IF sourcefile = -1 THEN EXIT
+sourcefile = fso.buildPath(rootdir, sourcefile)
+DIM eventlist = fso.buildPath(rootdir, "イベント詳細一覧表.xlsx")
+
+// 実行
+DIM pyname = fso.buildPath(GET_CUR_DIR, "src\main.py")
+DIM cmd = "python " + _
+       pyname + " " + _
+       "<#DBL>" + sourcefile + "<#DBL> " + _
+       "-e " + _
+       "<#DBL>" + eventlist + "<#DBL>"
+DIM html = DOSCMD(cmd)
+// 出力
+DIM fid = FOPEN("out.html", F_WRITE8)
+FPUT(fid, html)
+FCLOSE(fid)
+fso.copyFile(fso.buildPath(GET_CUR_DIR, "tmpl\main.css"), _
+  fso.buildPath(GET_CUR_DIR, "main.css"))
+
+MSGBOX("実行が完了しました")
+
+FUNCTION GetEventFile(rootdir)
+  GETDIR(rootdir, "??月ふらっとイベント表.xlsx")
+  RESULT = SLCTBOX(SLCT_CMB + SLCT_STR, 0, "処理対象のファイルを選んでください", GETDIR_FILES)
+FEND
