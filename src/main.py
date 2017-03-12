@@ -45,7 +45,8 @@ def get_eventlist(filename):
   events = {}
   for row in slist.rows:
     if row[0].row != 1:
-      events[row[0].value] = {"location": row[2].value, 
+      n = get_eventname(row[0].value)
+      events[n] = {"location": row[2].value, 
           "type": row[1].value,
           "description": row[3].value}
   return events
@@ -74,9 +75,10 @@ def get_monthevent(filename, events, continue_is_fault):
           daylist = []
         data["mark"] = row[3].value
         data["name"] = row[4].value
-        t = events[data["name"]]["type"]
+        dbename = get_eventname(data["name"])
+        t = events[dbename]["type"]
         data["type"] = t.lower() if t != None else "closed"
-        data["description"] = str(events[data["name"]]["description"]).replace("_x000D_", "<br>")
+        data["description"] = str(events[dbename]["description"]).replace("_x000D_", "<br>")
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
           data["stime"] = ts[0]
@@ -116,9 +118,19 @@ def get_monthevent(filename, events, continue_is_fault):
 
   return caldata 
 
+### データベース向けのイベント名称を取得する(具体的にはイベントタイトルの「第n回」などの表記を取り除き正規化する)
+def get_eventname(oldname):
+  import re
+  import unicodedata
+  # 無効な文字の除去
+  n = re.sub(u"\([^第].*[^回]\)", "", oldname)
+  n = re.sub(u"『.*』\)", "", oldname)
+  # 日本語的な揺れ除去
+  n = unicodedata.normalize("NFKC", n)
+  return n
+
 try:
   args = parser.parse_args()
   main(args)
 except FileNotFoundError as fnfe:
   print(u"引数に指定したファイルが存在しません。")
-
