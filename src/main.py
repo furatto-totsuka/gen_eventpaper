@@ -46,9 +46,12 @@ def get_eventlist(filename):
   for row in slist.rows:
     if row[0].row != 1 and row[0].value != None:
       n = get_eventname(row[0].value)
-      events[n] = {"location": row[2].value, 
-          "type": row[1].value,
-          "description": row[3].value}
+      type = row[1].value
+      location = "ふらっとステーション・とつか" if row[2].value == None else row[2].value
+      description = "" if row[3].value == None else row[3].value
+      events[n] = {"location": location, 
+          "type": type,
+          "description": description}
   return events
 
 ### イベント表をチェックする(振り分け関数)
