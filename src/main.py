@@ -51,10 +51,21 @@ def get_eventlist(filename):
           "description": row[3].value}
   return events
 
-### イベント表をチェックする
+### イベント表をチェックする(振り分け関数)
 def get_monthevent(filename, events, continue_is_fault):
-  bevent = load_workbook(filename)
-  sevent = bevent.active
+  book = load_workbook(filename)
+  sheet = book.active
+  if sheet['A1'].value == "No":
+    return get_monthevent_v1(sheet, events, continue_is_fault)
+  else:
+    return get_monthevent_v2(sheet, events, continue_is_fault)
+
+### イベント表をチェックする
+def get_monthevent_v2(worksheet, events, continue_is_fault):
+  pass
+
+### イベント表をチェックする
+def get_monthevent_v1(worksheet, events, continue_is_fault):
   caldata = []
   daylist = []
   errdata = []
