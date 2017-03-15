@@ -44,7 +44,7 @@ def get_eventlist(filename):
   slist = blist.active
   events = {}
   for row in slist.rows:
-    if row[0].row != 1:
+    if row[0].row != 1 and row[0].value != None:
       n = get_eventname(row[0].value)
       events[n] = {"location": row[2].value, 
           "type": row[1].value,
