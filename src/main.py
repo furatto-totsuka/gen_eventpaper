@@ -70,7 +70,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
   daylist = []
   errdata = []
   date = None
-  for row in sevent.rows:
+  for row in worksheet.rows:
     try:
       if row[0].row != 1:
         data = {}
