@@ -3,6 +3,7 @@
 import argparse
 from openpyxl import load_workbook
 from jinja2 import Environment, FileSystemLoader
+import re
 from pprint import pprint
 from datetime import datetime
 WEEK_JPNDAYS = ["月", "火", "水", "木", "金", "土", "日"]
@@ -65,7 +66,55 @@ def get_monthevent(filename, events, continue_is_fault):
 
 ### イベント表をチェックする
 def get_monthevent_v2(worksheet, events, continue_is_fault):
-  pass
+  tcaldata = []
+  header = []
+  # 読み取りフェーズ
+  for row in worksheet.rows:
+    if row[0].row == 1:
+      for i in range(0, 6):
+        header.append(row[i].value)
+    # 読み取り
+    if row[0].row != 1 and row[0].value != None:
+      data = {}
+      mark = row[0].value[0]
+      name = row[0].value[1:]
+      # 日時整理
+      datetimestr = re.split(u"[\(\（][日月火水木金土][\)\）]\s*", 
+        str(row[2].value))
+      dates = datetimestr[0].split("、")
+      time = datetimestr[1]
+      m = 0
+      days = []
+      for i in range(0, len(dates)):
+        daystr = dates[i]
+        d = 0
+        if daystr.find("/") != -1:
+          # 月がある
+          dm = daystr.split("/")
+          d = int(dm[1])
+          m = int(dm[0])
+        else:
+          d = int(daystr)
+
+        days.append(datetime(2016, m, d))
+
+      # 概要文収集
+      d = [] 
+      n = [1]
+      n += range(3, 7, 1)
+      for i in n:
+        if row[i].value != None:
+          s = str(row[i].value)
+          if i == 3:
+              s = header[i] + ":" + s 
+          d.append(s.strip())
+      description = "/".join(d)
+      # データ入力
+      data["mark"] = mark
+      data["name"] = name
+      data["type"] = get_eventtype(name, events)
+      data["description"] = get_eventdesc(name, events, description)
+      print(data["name"] + ":" + data["description"])
 
 ### イベント表をチェックする
 def get_monthevent_v1(worksheet, events, continue_is_fault):
@@ -132,16 +181,33 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
 
   return caldata 
 
+# TODO: あとでクラス化検討
 ### データベース向けのイベント名称を取得する(具体的にはイベントタイトルの「第n回」などの表記を取り除き正規化する)
 def get_eventname(oldname):
-  import re
   import unicodedata
   # 無効な文字の除去
-  n = re.sub(u"\([^第].*[^回]\)", "", oldname)
-  n = re.sub(u"『.*』\)", "", oldname)
+  oldname = re.sub(u"[\(（]第.*回[\)）]", "", oldname)
+  oldname = re.sub(u"『.*』\)", "", oldname)
   # 日本語的な揺れ除去
-  n = unicodedata.normalize("NFKC", n)
-  return n
+  oldname = unicodedata.normalize("NFKC", oldname.strip())
+  return oldname
+
+### イベントタイプを取得
+def get_eventtype(oldname, events):
+  dbename = get_eventname(oldname)
+  t = events[dbename]["type"]
+  tn = t.lower() if t != None else "closed"
+  return tn
+
+### イベント概要を取得
+def get_eventdesc(oldname, events, innerdescription):
+  tn = ""
+  if innerdescription != None:
+    tn = innerdescription
+  else:
+    dbename = get_eventname(oldname)
+    tn = events[dbename]["description"]
+  return tn.replace("_x000D_", "<br>")
 
 try:
   args = parser.parse_args()
