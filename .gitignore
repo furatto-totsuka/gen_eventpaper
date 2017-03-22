@@ -89,3 +89,5 @@ ENV/
 .ropeproject
 tmpl/*.css
 *.xlsx
+/*.css
+/*.html
