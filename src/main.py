@@ -136,12 +136,12 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
 def get_eventname(oldname):
   import re
   import unicodedata
-  # 無効な文字の除去
-  n = re.sub(u"\([^第].*[^回]\)", "", oldname)
-  n = re.sub(u"『.*』\)", "", oldname)
+  # 無効な文字の除去　
+  oldname = re.sub(u"[\(（]第.*回[\)）]", "", oldname)
+  oldname = re.sub(u"『.*』", "", oldname)
   # 日本語的な揺れ除去
-  n = unicodedata.normalize("NFKC", n)
-  return n
+  oldname = unicodedata.normalize("NFKC", oldname.strip())
+  return oldname
 
 try:
   args = parser.parse_args()
