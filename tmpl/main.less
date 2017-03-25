@@ -1,12 +1,12 @@
 @page{
   size: A4;
-  margin: 5mm;
+  margin: 0;
 }
 
 @media print{
   body{
-    width: 200mm;
-  	margin: 12.7mm 9.7mm;
+    width: 206mm;
+  	margin: 9.7mm 6.7mm;
   }
 }
 
@@ -15,6 +15,7 @@
 */
 header{
   color: black;
+  width: ~"calc(100% - 44px)";
   .clearfix();
   .mainwindow();
   > section{
@@ -91,6 +92,7 @@ section#main{
       width: 100%;
       border: 0 dashed black;
       border-width: 2px 0;
+      margin: 8px 0;
       .weekdays();
       &:nth-child(2n) {
         background-color: #eee;
