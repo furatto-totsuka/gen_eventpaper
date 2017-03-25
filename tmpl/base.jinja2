@@ -51,6 +51,11 @@
       </ul>
     </section>
 
+    {% if notice != None %}
+      <section id="notice">
+        {{ notice }}
+      </section>
+    {% endif %}
     <footer>
       <p>気になるイベントがあれば、ふらっとステーション・とつかまで、お問い合わせください！</p>
       <address>

@@ -21,6 +21,9 @@ parser.add_argument('-f', '--continue_is_fault',
                     default=False, 
                     action='store_true',
                     help=u'イベント詳細が見つからない項目があった場合でも、そのままリストを生成します(省略時False)')
+parser.add_argument('-n', '--notice', 
+                    type=str,
+                    help=u'フッタに表示する通知文を指定します')
 def main(args):  
   # イベントリスト作成
   events = get_eventlist(args.eventlist)
@@ -31,7 +34,8 @@ def main(args):
   vars = {
     "year": baseday.year,
     "month" : baseday.month,
-    "events": caldata
+    "events": caldata,
+    "notice": args.notice
   }
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
   tmpl= env.get_template("base.jinja2")
