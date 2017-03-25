@@ -123,9 +123,14 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
   import calendar
   d = caldata[0]["date"]
   lastday = calendar.monthrange(d.year, d.month)[1]
+  days = []
+  for data in caldata:
+    days.append(data["day"])
+  sorted(days)
+
   for day in range(1, lastday):
     dd = datetime(d.year, d.month, day)
-    if dd.weekday() == 3:
+    if dd.weekday() == 3 and not dd.day in days:
       caldata.append({
         "date": dd,
         "day" : dd.day,
