@@ -24,6 +24,10 @@ parser.add_argument('-f', '--continue_is_fault',
 parser.add_argument('-n', '--notice', 
                     type=str,
                     help=u'フッタに表示する通知文を指定します')
+parser.add_argument('-t', '--template',
+                    type=str,
+                    default="doc",
+                    help=u'テンプレートを指定します(省略時doc)')
 def main(args):  
   # イベントリスト作成
   events = get_eventlist(args.eventlist)
@@ -38,7 +42,7 @@ def main(args):
     "notice": args.notice
   }
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
-  tmpl= env.get_template("base.jinja2")
+  tmpl= env.get_template(args.template + ".jinja2")
   html = tmpl.render(vars)
   print(html)
 
