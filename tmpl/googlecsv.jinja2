@@ -1,8 +1,8 @@
 Start Date,Start Time,End Date,End Time,Subject,Location,Description
-{% for event in events %}
-{% if event.list is defined %}
-{% for e in event.list %}
-{{ event.ymd }},{{e.stime}},{{ event.ymd }},{{e.etime}},{{ e.mark }}{{ e.name }},{{e.location}},{{ e.description }}
-{% endfor %}
-{% endif %}
-{% endfor %}
+{%- for event in events -%}
+{%- if event.list is defined -%}
+{%- for e in event.list %}
+{{ event.ymd }},{{e.stime}},{{ event.ymd }},{{e.etime}},"{{ e.mark }}{{ e.name }}","{{e.location}}","{{ e.description }}"
+{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}

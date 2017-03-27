@@ -89,6 +89,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
           if len(daylist) != 0: # 前日の予定をイベントリストに追加
             caldata.append({
               "date": date,
+              "ymd": "{0:%Y/%m/%d}".format(date),
               "day" : date.day,
               "weekjpn": WEEK_JPNDAYS[date.weekday()],
               "weekeng": WEEK_ENGDAYS[date.weekday()],
@@ -100,6 +101,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
         dbename = get_eventname(data["name"])
         t = events[dbename]["type"]
         data["type"] = t.lower() if t != None else "closed"
+        data["location"] = events[dbename]["location"]
         data["description"] = str(events[dbename]["description"]).replace("_x000D_", "<br>")
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
