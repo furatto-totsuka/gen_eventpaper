@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="shift_jis">
+  <title>ふらっとイベントだより</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <header>
+    <section id="title">
+      <h2>コミュニティスペース「ふらっとステーション・とつか」予定表</h2>
+      <h1><span class="title">ふらっとイベントだより</span></h1>
+      <h3><span class="year">{{year}}</span>年<span class="month">{{month}}</span>月号</h3>
+    </section>
+    <aside>
+      <ul>
+        <li>◆：ふらっとST主催</li>
+        <li>■：共催企画</li>
+        <li>◇：ふらっと登録団体主催企画</li>
+      </ul>
+    </aside>
+  </header>
+
+  <section id="print_main">
+    <section id="main">
+      <ul class="outer">
+      {% for event in events %}
+        <!-- {{ event.day }} -->
+        <li class="row {{ event.weekeng }}">
+          <span class="cell day">{{ event.day }}</span>
+          <span class="cell week">{{ event.weekjpn }}</span>
+          <ul class="cell eventlist">
+            {% if event.list is defined %}
+              {% for e in event.list %}
+                <li class="{{ e.type }}">
+                  <span class="info">
+                    <span class="name">{{ e.mark }}{{ e.name }}</span>
+                    {% if e.description != "None" %}
+                      <span class="detail">{{ e.description }}</span>
+                    {% endif %}
+                  </span>
+                  <span class="time">{{ e.stime }}～{{ e.etime }}</span>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>{{ event.text }}</li>
+            {% endif %}
+          </ul>
+        </li>
+      {% endfor %}
+      </ul>
+    </section>
+
+    {% if notice != None %}
+      <section id="notice">
+        {{ notice }}
+      </section>
+    {% endif %}
+    <footer>
+      <p>気になるイベントがあれば、ふらっとステーション・とつかまで、お問い合わせください！</p>
+      <address>
+        <span class="address">〒244-0817 横浜市戸塚区吉田町 104-1 ザ・パークハウス戸塚 1F</span>
+        <span class="phone">TEL: <a herf="tel://0454355068">045（435）5068</a></span>
+        <span class="fax">FAX: 045（435）5067</span>
+        <span class="email">E-mail: <a href="m&#97;i&#108;t&#111;:&#102;&#115;&#95;&#115;t&#97;&#102;f&#64;f&#117;&#114;&#97;&#116;&#116;&#111;&#45;&#116;&#111;&#116;&#115;u&#107;a.c&#111;&#109;">&#102;&#115;&#95;&#115;t&#97;&#102;f&#64;f&#117;&#114;&#97;&#116;&#116;&#111;&#45;&#116;&#111;&#116;&#115;u&#107;a.c&#111;&#109;</a></span>
+        <span class="url">URL: <a href="http://furatto-totsuka.com/wp/">http://furatto-totsuka.com/wp/</a></span>
+        <span class="opentime">オープン: 10時～17時 定休日: 木曜日（土・日・祝日もオープン）</span>
+      </address>
+    </footer>
+  </section>
+</body>
+</html>

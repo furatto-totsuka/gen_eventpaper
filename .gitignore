@@ -91,3 +91,4 @@ tmpl/*.css
 *.xlsx
 /*.css
 /*.html
+out.*

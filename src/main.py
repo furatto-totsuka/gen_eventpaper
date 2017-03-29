@@ -24,6 +24,10 @@ parser.add_argument('-f', '--continue_is_fault',
 parser.add_argument('-n', '--notice', 
                     type=str,
                     help=u'フッタに表示する通知文を指定します')
+parser.add_argument('-t', '--template',
+                    type=str,
+                    default="doc",
+                    help=u'テンプレートを指定します(省略時doc)')
 def main(args):  
   # イベントリスト作成
   events = get_eventlist(args.eventlist)
@@ -38,7 +42,7 @@ def main(args):
     "notice": args.notice
   }
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
-  tmpl= env.get_template("base.jinja2")
+  tmpl= env.get_template(args.template + ".jinja2")
   html = tmpl.render(vars)
   print(html)
 
@@ -85,6 +89,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
           if len(daylist) != 0: # 前日の予定をイベントリストに追加
             caldata.append({
               "date": date,
+              "ymd": "{0:%Y/%m/%d}".format(date),
               "day" : date.day,
               "weekjpn": WEEK_JPNDAYS[date.weekday()],
               "weekeng": WEEK_ENGDAYS[date.weekday()],
@@ -96,6 +101,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
         dbename = get_eventname(data["name"])
         t = events[dbename]["type"]
         data["type"] = t.lower() if t != None else "closed"
+        data["location"] = events[dbename]["location"]
         data["description"] = str(events[dbename]["description"]).replace("_x000D_", "<br>")
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           ts = row[5].value.split("～")
