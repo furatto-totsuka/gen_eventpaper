@@ -1,7 +1,8 @@
 # python
 # -*- coding: utf-8 -*-
 import argparse
-from openpyxl import load_workbook
+import openpyxl
+from data import EventManager, Day
 from jinja2 import Environment, FileSystemLoader
 from pprint import pprint
 from datetime import datetime
@@ -27,7 +28,7 @@ parser.add_argument('-t', '--template',
                     help=u'テンプレートを指定します(省略時doc)')
 def main(args):  
   # イベントリスト作成
-  events = get_eventlist(args.eventlist)
+  events = EventManager(args.eventlist)
   caldata = get_monthevent(args.filename, events, args.continue_is_fault)
 
   # テンプレート展開
@@ -43,25 +44,9 @@ def main(args):
   html = tmpl.render(vars)
   print(html)
 
-### イベントリストを取得
-def get_eventlist(filename):
-  blist = load_workbook(filename)
-  slist = blist.active
-  events = {}
-  for row in slist.rows:
-    if row[0].row != 1 and row[0].value != None:
-      n = get_eventname(row[0].value)
-      type = row[1].value
-      location = "ふらっとステーション・とつか" if row[2].value == None else row[2].value
-      description = "" if row[3].value == None else row[3].value
-      events[n] = {"location": location, 
-          "type": type,
-          "description": description}
-  return events
-
 ### イベント表をチェックする(振り分け関数)
 def get_monthevent(filename, events, continue_is_fault):
-  book = load_workbook(filename)
+  book = openpyxl.load_workbook(filename)
   sheet = book.active
   if sheet['A1'].value == "No":
     return get_monthevent_v1(sheet, events, continue_is_fault)
@@ -84,26 +69,13 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
         data = {}
         if date == None or date != row[1].value:
           if len(daylist) != 0: # 前日の予定をイベントリストに追加
-            caldata.append({
-              "date": date,
-              "ymd": "{0:%Y/%m/%d}".format(date),
-              "day" : date.day,
-              "weekjpn": WEEK_JPNDAYS[date.weekday()],
-              "weekeng": WEEK_ENGDAYS[date.weekday()],
-              "list": daylist})
+            d = Day(date)
+            d.setEvents(daylist)
           date = row[1].value
           daylist = []
-        data["mark"] = row[3].value
-        data["name"] = row[4].value
-        dbename = get_eventname(data["name"])
-        t = events[dbename]["type"]
-        data["type"] = t.lower() if t != None else "closed"
-        data["location"] = events[dbename]["location"]
-        data["description"] = str(events[dbename]["description"]).replace("_x000D_", "<br>")
+        e = events.createEvent(row[3].value, row[4].value)
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
-          ts = row[5].value.split("～")
-          data["stime"] = ts[0]
-          data["etime"] = ts[1]
+          e.setTimeStr(row[5].value.split("～"))
         daylist.append(data)
 
     except KeyError as e:
@@ -134,26 +106,10 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
   for day in range(1, lastday):
     dd = datetime(d.year, d.month, day)
     if dd.weekday() == 3 and not dd.day in days:
-      caldata.append({
-        "date": dd,
-        "day" : dd.day,
-        "weekjpn": WEEK_JPNDAYS[dd.weekday()],
-        "weekeng": WEEK_ENGDAYS[dd.weekday()],
-        "text": "定休日"})
+      caldata.append(Day(dd, TRUE))
   caldata = sorted(caldata, key=lambda c: c["day"])
 
   return caldata 
-
-### データベース向けのイベント名称を取得する(具体的にはイベントタイトルの「第n回」などの表記を取り除き正規化する)
-def get_eventname(oldname):
-  import re
-  import unicodedata
-  # 無効な文字の除去　
-  oldname = re.sub(u"[\(（]第.*回[\)）]", "", oldname)
-  oldname = re.sub(u"『.*』", "", oldname)
-  # 日本語的な揺れ除去
-  oldname = unicodedata.normalize("NFKC", oldname.strip())
-  return oldname
 
 try:
   args = parser.parse_args()

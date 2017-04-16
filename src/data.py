@@ -28,9 +28,20 @@
       return Event(mark, name, type, location, description)
       
   class Day:
-    def __init__(self, date):
+    def __init__(self, date, holiday=FALSE):
       self.date = date
+      if holiday:
+        self.setHoliday(true)
     
+    def setEvents(self, events):
+      self.events = events
+
+    def setHoliday(self, holiday):
+      self.holiday = holiday
+      if self.holiday:
+          self.events = []
+          self.text = "定休日"
+
     def getOutputData(self):
       out = {
         "date" : self.date,
