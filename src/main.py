@@ -5,9 +5,6 @@ from openpyxl import load_workbook
 from jinja2 import Environment, FileSystemLoader
 from pprint import pprint
 from datetime import datetime
-WEEK_JPNDAYS = ["月", "火", "水", "木", "金", "土", "日"]
-WEEK_ENGDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
-
 parser = argparse.ArgumentParser(description='ふらっとステーション・とつか ふらっとイベントだより生成ツール')
 parser.add_argument('filename', 
                     type=str,
