@@ -75,7 +75,7 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
           daylist = []
         e = events.createEvent(row[3].value, row[4].value)
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
-          e.setTimeStr(row[5].value.split("～"))
+          e.setTimeStr(row[5].value)
         daylist.append(data)
 
     except KeyError as e:

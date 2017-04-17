@@ -6,14 +6,14 @@ class EventManager:
     import openpyxl
     blist = openpyxl.load_workbook(filename)
     slist = blist.active
-    self.events = []
+    self.events = {}
     for row in slist.rows:
       if row[0].row != 1 and row[0].value != None:
-        n = get_eventname(row[0].value)
+        n = Event.getEventName(row[0].value)
         type = row[1].value
         location = "ふらっとステーション・とつか" if row[2].value == None else row[2].value
         description = "" if row[3].value == None else row[3].value
-        events[n] = {"location": location, 
+        self.events[n] = {"location": location, 
             "type": type,
             "description": description}
 
@@ -21,10 +21,10 @@ class EventManager:
     """
       イベントレコードを作成する
     """
-    dbename = Event.getEventName(data["name"])
-    type = events[dbename]["type"]
-    location = events[dbename]["location"] if location == None else location      
-    description = str(events[dbename]["description"]) if description == None else description
+    dbename = Event.getEventName(name)
+    type = self.events[dbename]["type"]
+    location = self.events[dbename]["location"] if location == None else location      
+    description = str(self.events[dbename]["description"]) if description == None else description
     return Event(mark, name, type, location, description)
     
 class Day:
@@ -60,10 +60,10 @@ class Event:
     self.location = location
     self.description = description.replace("_x000D", "<br>")
 
-  def setTimeStr(time):
-    ts = row[5].value.split("～")
-    data["stime"] = ts[0]
-    data["etime"] = ts[1]
+  def setTimeStr(self, time):
+    ts = time.split("～")
+    self.stime = ts[0]
+    self.etime = ts[1]
 
   @classmethod
   def getEventName(cls, oldname):
