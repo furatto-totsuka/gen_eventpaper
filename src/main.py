@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 import argparse
 import openpyxl
-from data import EventManager, Day
+from data import EventManager, Day, EventList
 from jinja2 import Environment, FileSystemLoader
 from pprint import pprint
-from datetime import datetime
 parser = argparse.ArgumentParser(description='ふらっとステーション・とつか ふらっとイベントだより生成ツール')
 parser.add_argument('filename', 
                     type=str,
@@ -30,20 +29,21 @@ def main(args):
   # イベントリスト作成
   events = EventManager(args.eventlist)
   caldata = get_monthevent(args.filename, events, args.continue_is_fault)
+  caldata.insertHolidays()
 
   # テンプレート展開
-  baseday = caldata[0]["date"]
+  baseday = caldata.getMonthFirstDay()
   vars = {
     "year": baseday.year,
     "month" : baseday.month,
-    "events": caldata,
+    "events": caldata.getEventListToRawData(),
     "notice": args.notice
   }
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
   tmpl= env.get_template(args.template + ".jinja2")
   html = tmpl.render(vars)
   print(html)
-
+  
 ### イベント表をチェックする(振り分け関数)
 def get_monthevent(filename, events, continue_is_fault):
   book = openpyxl.load_workbook(filename)
@@ -59,25 +59,24 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
 
 ### イベント表をチェックする
 def get_monthevent_v1(worksheet, events, continue_is_fault):
-  caldata = []
+  caldata = EventList()
   daylist = []
   errdata = []
   date = None
   for row in worksheet.rows:
     try:
       if row[0].row != 1:
-        data = {}
         if date == None or date != row[1].value:
           if len(daylist) != 0: # 前日の予定をイベントリストに追加
             d = Day(date)
-            d.setEvents(daylist)
+            d.setEvents(list(daylist))
+            caldata.append(d)
           date = row[1].value
           daylist = []
         e = events.createEvent(row[3].value, row[4].value)
         if row[5].value != "": #時刻取得(時刻がないものについてはパースしない)
           e.setTimeStr(row[5].value)
-        daylist.append(data)
-
+        daylist.append(e)
     except KeyError as e:
       # 取得エラーはあとで報告
       errdata.append({
@@ -93,21 +92,6 @@ def get_monthevent_v1(worksheet, events, continue_is_fault):
       print(err["date"].strftime(u"%m/%d") + ":" + err["name"], file=sys.stderr)
     if not continue_is_fault:
       raise "処理に失敗しました"
-
-  # 木曜日を挿入する処理
-  import calendar
-  d = caldata[0]["date"]
-  lastday = calendar.monthrange(d.year, d.month)[1]
-  days = []
-  for data in caldata:
-    days.append(data["day"])
-  sorted(days)
-
-  for day in range(1, lastday):
-    dd = datetime(d.year, d.month, day)
-    if dd.weekday() == 3 and not dd.day in days:
-      caldata.append(Day(dd, TRUE))
-  caldata = sorted(caldata, key=lambda c: c["day"])
 
   return caldata 
 
