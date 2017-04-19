@@ -53,10 +53,26 @@ def get_monthevent(filename, events, continue_is_fault):
   else:
     return get_monthevent_v2(sheet, events, continue_is_fault)
 
-### イベント表をチェックする
 def get_monthevent_v2(worksheet, events, continue_is_fault):
+  u"""イベント表をチェックする。v2フォーマット処理"""
   caldata = EventList()
   ym = calcym(worksheet.title)
+  # 一回目スキャン(リストは並び替えられていない)
+  list = []
+  for row in worksheet.rows:
+    if row[0].row != 1:
+      list.append({
+        "date": int(row[0].value),
+        "week": row[1].value,
+        "name": row[2].value,
+        "time": row[3].value,
+        "content": row[4].value,
+        "cost": row[5].value,
+        "remark": row[6].value,
+      })
+  list = sorted(list, key=lambda c: c["date"])
+  pprint(list)
+
 
 def calcym(wstitle):
   u"""わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
