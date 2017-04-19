@@ -55,7 +55,16 @@ def get_monthevent(filename, events, continue_is_fault):
 
 ### イベント表をチェックする
 def get_monthevent_v2(worksheet, events, continue_is_fault):
-  pass
+  caldata = EventList()
+  ym = calcym(worksheet.title)
+
+def calcym(wstitle)
+  """わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
+  import re
+  go = re.match("第(\d+)号(\d+)月号", wstitle)
+  year = int((int(go.group(1)) + 3) / 12) + 2014
+  month = int(go.group(2))
+  return (year, month)
 
 ### イベント表をチェックする
 def get_monthevent_v1(worksheet, events, continue_is_fault):
