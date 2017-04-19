@@ -58,8 +58,8 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
   caldata = EventList()
   ym = calcym(worksheet.title)
 
-def calcym(wstitle)
-  """わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
+def calcym(wstitle):
+  u"""わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
   import re
   go = re.match("第(\d+)号(\d+)月号", wstitle)
   year = int((int(go.group(1)) + 3) / 12) + 2014
