@@ -71,8 +71,6 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
         "remark": row[6].value,
       })
   list = sorted(list, key=lambda c: c["date"])
-  pprint(list)
-
 
 def calcym(wstitle):
   u"""わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
