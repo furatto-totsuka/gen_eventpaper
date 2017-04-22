@@ -55,22 +55,66 @@ def get_monthevent(filename, events, continue_is_fault):
 
 def get_monthevent_v2(worksheet, events, continue_is_fault):
   u"""イベント表をチェックする。v2フォーマット処理"""
-  caldata = EventList()
   ym = calcym(worksheet.title)
   # 一回目スキャン(リストは並び替えられていない)
-  list = []
+  lw = []
   for row in worksheet.rows:
     if row[0].row != 1:
-      list.append({
+      lw.append({
         "date": int(row[0].value),
         "week": row[1].value,
-        "name": row[2].value,
+        "mark": row[2].value[0],
+        "name": row[2].value[1:],
         "time": row[3].value,
         "content": row[4].value,
         "cost": row[5].value,
         "remark": row[6].value,
       })
-  list = sorted(list, key=lambda c: c["date"])
+  lw = sorted(lw, key=lambda c: c["date"])
+
+  # 二回目スキャン（リストは並び替え済み）
+  day = None
+  caldata = EventList()
+  daylist = []
+  errdata = []
+  from datetime import datetime
+  for row in lw:
+    try:
+      if day == None or day != row["date"]:
+        if len(daylist) != 0: # 前日の予定をイベントリストに追加
+          d = Day(datetime(ym[0], ym[1], day))
+          d.setEvents(list(daylist))
+          caldata.append(d)
+        day = row["date"]
+        daylist = []
+      # description作成
+      des = ""
+      des = des + u"□" + row["content"] if row["content"] != None else des
+      des = des + u"□参加費：" + row["cost"] if row["cost"] != None else des
+      des = des + u"□" + row["remark"] if row["remark"] != None else des
+      des = None if des == "" else des
+      e = events.createEvent(row["mark"], row["name"], des)
+      if row["time"] != "": #時刻取得(時刻がないものについてはパースしない)
+        e.setTimeStr(row["time"])
+      daylist.append(e)  
+    except KeyError as e:
+      # 取得エラーはあとで報告
+      errdata.append({
+        "date": datetime(ym[0], ym[1], row["date"]),
+        "name": row["name"],
+        "remark": u"イベント詳細定義ファイルに定義が見つからない"
+      })
+
+  if len(errdata) != 0:
+    # エラー確認
+    import sys
+    print(u"エラーがありました。広報メンバーに確認してください", file=sys.stderr)
+    for err in errdata:
+      print(f"{err['date']:%m/%d}:{err['name']}({err['remark']})", file=sys.stderr)
+    if not continue_is_fault:
+      raise "処理に失敗しました"
+    
+  return caldata
 
 def calcym(wstitle):
   u"""わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
