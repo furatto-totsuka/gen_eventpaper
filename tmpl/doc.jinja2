@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="shift_jis">
+  <meta charset="utf-8">
   <title>ふらっとイベントだより</title>
   <link rel="stylesheet" href="main.css">
 </head>
@@ -25,28 +25,26 @@
     <section id="main">
       <ul class="outer">
       {% for event in events %}
-        <!-- {{ event.day }} -->
-        <li class="row {{ event.weekeng }}">
-          <span class="cell day">{{ event.day }}</span>
-          <span class="cell week">{{ event.weekjpn }}</span>
-          <ul class="cell eventlist">
-            {% if event.list is defined %}
-              {% for e in event.list %}
-                <li class="{{ e.type }}">
-                  <span class="info">
-                    <span class="name">{{ e.mark }}{{ e.name }}</span>
-                    {% if e.description != "None" %}
-                      <span class="detail">{{ e.description }}</span>
-                    {% endif %}
-                  </span>
-                  <span class="time">{{ e.stime }}～{{ e.etime }}</span>
-                </li>
-              {% endfor %}
-            {% else %}
-              <li>{{ event.text }}</li>
-            {% endif %}
-          </ul>
-        </li>
+        {% if event.list is defined %}
+          <!-- {{ event.day }} -->
+          <li class="row {{ event.weekeng }}">
+            <span class="cell day">{{ event.day }}</span>
+            <span class="cell week">{{ event.weekjpn }}</span>
+            <ul class="cell eventlist">
+            {% for e in event.list %}
+              <li class="{{ e.type }}">
+                <span class="info">
+                  <span class="name">{{ e.mark }}{{ e.name }}</span>
+                  {% if e.description != "None" %}
+                    <span class="detail">{{ e.description }}</span>
+                  {% endif %}
+                </span>
+                <span class="time">{{ e.stime }}～{{ e.etime }}</span>
+              </li>
+            {% endfor %}
+            </ul>
+          </li>
+        {% endif %}
       {% endfor %}
       </ul>
     </section>
