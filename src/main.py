@@ -105,6 +105,11 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
         "remark": u"イベント詳細定義ファイルに定義が見つからない"
       })
 
+  // TODO: コードが二重に作成されている。重複を避ける方法はない？
+  if len(daylist) != 0: # 前日の予定をイベントリストに追加
+    d = Day(datetime(ym[0], ym[1], day))
+    d.setEvents(list(daylist))
+    caldata.append(d)
   if len(errdata) != 0:
     # エラー確認
     import sys
