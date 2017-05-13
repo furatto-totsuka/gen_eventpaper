@@ -48,7 +48,8 @@ def main(args):
   if args.output == None:
     print(html)
   else:
-    f = open(args.output, 'w')
+    import codecs
+    f = codecs.open(args.output, 'w', 'utf-8')
     f.write(html)
     f.close()
   
