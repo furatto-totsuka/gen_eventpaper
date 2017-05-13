@@ -25,6 +25,9 @@ parser.add_argument('-t', '--template',
                     type=str,
                     default="doc",
                     help=u'テンプレートを指定します(省略時doc)')
+parser.add_argument('-o', '--output',
+                    type=str,
+                    help=u'出力するファイル名を指定します(省略時は標準出力に出力します)')
 def main(args):  
   # イベントリスト作成
   events = EventManager(args.eventlist)
@@ -42,7 +45,12 @@ def main(args):
   env = Environment(loader=FileSystemLoader('./tmpl/', encoding='utf8'))
   tmpl= env.get_template(args.template + ".jinja2")
   html = tmpl.render(vars)
-  print(html)
+  if args.output == None:
+    print(html)
+  else:
+    f = open(args.output, 'w')
+    f.write(html)
+    f.close()
   
 ### イベント表をチェックする(振り分け関数)
 def get_monthevent(filename, events, continue_is_fault):
