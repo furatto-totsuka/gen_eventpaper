@@ -136,8 +136,9 @@ class Event:
 
   def setTimeStr(self, time):
     ts = time.split("～")
-    self.stime = ts[0]
-    self.etime = ts[1]
+    import zenhan
+    self.stime = zenhan.z2h(ts[0])
+    self.etime = zenhan.z2h(ts[1])
 
   @classmethod
   def getEventName(cls, oldname):
