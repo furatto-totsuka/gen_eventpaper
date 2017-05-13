@@ -28,6 +28,10 @@ parser.add_argument('-t', '--template',
 parser.add_argument('-o', '--output',
                     type=str,
                     help=u'出力するファイル名を指定します(省略時は標準出力に出力します)')
+parser.add_argument('-c', '--charset',
+                    type=str,
+                    default="utf-8",
+                    help=u'ファイル出力時の文字コードを指定します(省略時UTF-8)')
 def main(args):  
   # イベントリスト作成
   events = EventManager(args.eventlist)
@@ -49,7 +53,7 @@ def main(args):
     print(html)
   else:
     import codecs
-    f = codecs.open(args.output, 'w', 'utf-8')
+    f = codecs.open(args.output, 'w', args.charset)
     f.write(html)
     f.close()
   
