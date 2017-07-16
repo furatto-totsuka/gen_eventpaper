@@ -105,9 +105,6 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
         daylist = []
       # description作成
       des = ""
-      des = des + u"□" + row["content"] if row["content"] != None else des
-      des = des + u"□参加費：" + row["cost"] if row["cost"] != None else des
-      des = des + u"□" + row["remark"] if row["remark"] != None else des
       des = None if des == "" else des
       e = events.createEvent(row["mark"], row["name"], des)
       if row["time"] != "": #時刻取得(時刻がないものについてはパースしない)
