@@ -71,17 +71,20 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
   ym = calcym(worksheet.title)
   # 一回目スキャン(リストは並び替えられていない)
   lw = []
+  ld = 0
   for row in worksheet.rows:
     if row[0].row != 1:
+      if row[0] != None: # 日付がNoneの場合、直前のセルの日付を使う
+        ld = int(row[0].value)
+      d = ld
       lw.append({
-        "date": int(row[0].value),
+        "date": d,
         "week": row[1].value,
-        "mark": row[2].value[0],
-        "name": row[2].value[1:],
-        "time": row[3].value,
+        "time": row[2].value,
+        "mark": row[3].value[0],
+        "name": row[3].value[1:],
         "content": row[4].value,
-        "cost": row[5].value,
-        "remark": row[6].value,
+        "type": row[6].value,
       })
   lw = sorted(lw, key=lambda c: c["date"])
 
