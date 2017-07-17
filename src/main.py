@@ -73,8 +73,8 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
   lw = []
   ld = 0
   for row in worksheet.rows:
-    if row[0].row != 1:
-      if row[0] != None: # 日付がNoneの場合、直前のセルの日付を使う
+    if row[0].row != 1 and row[3].value != None and row[4].value != None and row[5].value != None:
+      if row[0] != None and row[0].value != None: # 日付がNoneの場合、直前のセルの日付を使う
         ld = int(row[0].value)
       d = ld
       lw.append({
@@ -84,7 +84,7 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
         "mark": row[3].value[0],
         "name": row[3].value[1:],
         "content": row[4].value,
-        "type": row[6].value,
+        "type": row[5].value,
       })
   lw = sorted(lw, key=lambda c: c["date"])
 
@@ -103,10 +103,7 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
           caldata.append(d)
         day = row["date"]
         daylist = []
-      # description作成
-      des = ""
-      des = None if des == "" else des
-      e = events.createEvent(row["mark"], row["name"], des, None, row["type"])
+      e = events.createEvent(row["mark"], row["name"], row["content"], u"ふらっとステーション・とつか", row["type"])
       if row["time"] != "": #時刻取得(時刻がないものについてはパースしない)
         e.setTimeStr(row["time"])
       daylist.append(e)  
@@ -137,8 +134,8 @@ def get_monthevent_v2(worksheet, events, continue_is_fault):
 def calcym(wstitle):
   u"""わくわくだよりのタイトルから、何年何月のわくわくだよりかチェックする"""
   import re
-  go = re.match("第(\d+)号(\d+)月号", wstitle)
-  year = int((int(go.group(1)) + 3) / 12) + 2014
+  go = re.match("(\d{4})(\d{2})", wstitle)
+  year = int(go.group(1))
   month = int(go.group(2))
   return (year, month)
 
