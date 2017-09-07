@@ -64,14 +64,15 @@ class EventManager:
             "type": type,
             "description": description}
 
-  def createEvent(self, mark, name, description = None, location = None):
+  def createEvent(self, mark, name, description = None, location = None, type = None):
     """
       イベントレコードを作成する
     """
     dbename = Event.getEventName(name)
-    type = self.events[dbename]["type"]
-    location = self.events[dbename]["location"] if location == None else location      
-    description = str(self.events[dbename]["description"]) if description == None else description
+    if type == None:
+      type = self.events[dbename]["type"]
+      location = self.events[dbename]["location"] if location == None else location      
+      description = str(self.events[dbename]["description"]) if description == None else description
     return Event(mark, name, type, location, description)
 
 class Day:
